@@ -1,4 +1,4 @@
-# Minter
+# Quetzal
 <img src="https://i.imgur.com/QDJPsAA.png" alt="cover_image" width="0" />
 This is a simple minter example built on top of Next.js 14
 
@@ -40,7 +40,7 @@ Get your Eden AI API Key from (https://www.edenai.co/blog?categories=Use+case)
 ```
 EDEN_AI_API_KEY=
 ```
-If you have issues with the API env, please enter the key directly to the edenAiService.ts, for example `"Bearer XXXXXXXXXXXXX"`. ⚠️ This is not recommended for a production environment, please do so at your discretion.
+- If you have issues with the API env, please enter the key directly to the edenAiService.ts, for example `"Bearer XXXXXXXXXXXXX"`. ⚠️ This is not recommended for a production environment, please do so at your discretion.
 
 - `proxyAddress`: This is the address of the proxy contract on Mintbase. It is either taken from the environment variable `NEXT_PUBLIC_PROXY_CONTRACT_ADDRESS` or defaults to `"0.minsta.proxy.mintbase.testnet"` if the environment variable is not set.
 

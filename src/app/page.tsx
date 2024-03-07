@@ -63,7 +63,7 @@ const txnHashes = params.get("transactionHashes")
       <main className="flex flex-col items-center justify-center mt-2 ">
         <div className="flex flex-1 flex-col w-full flex flex-col justify-center items-center space-y-8  min-h-screen text-gray-500">
           <Head>
-            <title>Mintbase - Simple Minter Example</title>
+            <title>Quetzal</title>
           </Head>
           <div className="mx-6 sm:mx-24 mt-4 mb-4">
             <div className="w-full flex flex-col justify-center items-center">
@@ -71,7 +71,7 @@ const txnHashes = params.get("transactionHashes")
                 <div className="flex flex-col justify-center items-center space-y-8">
                   <h1 className="h1-90 text-5xl text-white">Mintbase Minter</h1>
                   <h2 className="p-big-90 text-white">
-                    A simple NFT Minter on Mintbase
+                    Selfie to NFT 
                   </h2>
                 </div>
                 <div>
