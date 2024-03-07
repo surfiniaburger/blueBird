@@ -152,8 +152,8 @@ export default function Vision() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Webcam Capture</CardTitle>
-        <CardDescription>A simple webcam capture component</CardDescription>
+        <CardTitle>Quetzal</CardTitle>
+        <CardDescription>Capture moments and mint NFT</CardDescription>
       </CardHeader>
       <CardContent>
         {isClient && (
@@ -189,7 +189,7 @@ export default function Vision() {
         {loading && <p>Loading...</p>}
         {highestEmotion && !loading && <p>Title: {highestEmotion}</p>}
         <div className="mt-2">
-                {<p>Description:<Haiku lines={description.split('\n')} /></p>}
+                {<Haiku lines={description.split('\n')} />}
           </div>
         {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180}/>} {/* Render captured image */}
       </CardContent>
