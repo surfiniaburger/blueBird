@@ -69,7 +69,7 @@ const txnHashes = params.get("transactionHashes")
             <div className="w-full flex flex-col justify-center items-center">
               <div className="w-full flex flex-col justify-center items-center space-y-8">
                 <div className="flex flex-col justify-center items-center space-y-8">
-                  <h1 className="h1-90 text-5xl text-white">Mintbase Minter</h1>
+                  <h1 className="h1-90 text-5xl text-white">Quetzal</h1>
                   <h2 className="p-big-90 text-white">
                     Selfie to NFT 
                   </h2>

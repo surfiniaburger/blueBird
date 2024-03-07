@@ -22,6 +22,10 @@ export function SuccessPage({ data }: { data: SuccessPageData }): JSX.Element {
   const { nftTitle, mediaUrl, metaPage, txnHashUrl } = data;
 
   return (
+    <>
+    <Link  href="/">
+        <Button> Home </Button>
+    </Link>
     <Card className="w-[350px]">
       <CardHeader>
         <CardDescription> Success you just Minted! </CardDescription>
@@ -41,5 +45,7 @@ export function SuccessPage({ data }: { data: SuccessPageData }): JSX.Element {
         </Link>
       </CardFooter>
     </Card>
+    </>
+    
   );
 }
