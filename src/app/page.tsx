@@ -10,7 +10,7 @@ import { mbUrl, nearblocksUrl } from "@/config/setup";
 import { getTxnHash } from "@/hooks/utils";
 import { useEffect, useState } from "react";
 import Vision from "@/components/Vision";
-
+import Minter from "@/components/Minter";
 
 export default function Home() {
   const { isConnected } = useMbWallet();
@@ -55,6 +55,7 @@ const txnHashes = params.get("transactionHashes")
       <main className="flex flex-col items-center justify-center mt-2 ">
         <NearWalletConnector />
         <Vision/>
+        <Minter />
       </main>
     );
 

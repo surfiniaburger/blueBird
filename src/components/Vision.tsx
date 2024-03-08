@@ -179,13 +179,13 @@ export default function Vision() {
         </div>
         )}
 
-        <button onClick={capture} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={capture} className="bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
           Capture
         </button>
-        <button onClick={clearData} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">
+        <button onClick={clearData} className="bg-blue-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">
           Clear Data
         </button>
-        <button onClick={mintWorthy} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">Mint Worthy</button>
+        <button onClick={mintWorthy} className="bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-4">Mint Worthy</button>
         {loading && <p>Loading...</p>}
         {highestEmotion && !loading && <p>Title: {highestEmotion}</p>}
         <div className="mt-2">
