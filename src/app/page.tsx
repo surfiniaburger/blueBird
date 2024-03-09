@@ -15,6 +15,9 @@ import Vision from "@/components/Vision";
 export default function Home() {
   const { isConnected } = useMbWallet();
   const [txnUrl, setTxnUrl] = useState("");
+  
+ 
+
 
 
   const params = useSearchParams();
@@ -55,13 +58,14 @@ const txnHashes = params.get("transactionHashes")
       <main className="flex flex-col items-center justify-center mt-2 ">
         <NearWalletConnector />
         <Vision/>
+        
       </main>
     );
 
   return (
     <>
       <main className="flex flex-col items-center justify-center mt-2 ">
-        <div className="flex flex-1 flex-col w-full flex flex-col justify-center items-center space-y-8  min-h-screen text-gray-500">
+        <div className="flex flex-1 flex-col w-full  justify-center items-center space-y-8  min-h-screen text-gray-500">
           <Head>
             <title>Quetzal</title>
           </Head>

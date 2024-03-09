@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// Vision.tsx
 'use client'
 import React, { useState, useEffect } from 'react';
 
@@ -9,6 +10,15 @@ import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 import Image from 'next/image'
 import { analyzeEmotions } from '@/app/api/emotion/edenAiService';
 import useMintImage from '@/hooks/useMint';
+import { models } from "../data/models";
+import { Button } from './ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Haiku = ({ lines }: { lines: string[] }) => (
   <pre className="whitespace-pre-wrap">
@@ -25,10 +35,14 @@ export default function Vision() {
   const [description, setDescription] = useState('');
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [webcamEnabled, setWebcamEnabled] = useState<boolean>(false); // New state for webcam status
+  const [model, setModel] = useState<string | undefined>();
+  const [promptResult, setPromptResult] = useState<any | null>(null);
+
 
 
   const webcamRef = React.useRef<Webcam>(null);
   const { onSubmit } = useMintImage();
+  const { form, onSubmit: submitPrompt } = useMintImage();
 
   useEffect(() => {
     setIsClient(true);
@@ -96,6 +110,8 @@ export default function Vision() {
       if (highestEmotionName !== null) {
         setHighestEmotion(highestEmotionName);
         append({ role: "user", content: "Craft a haiku of '" + highestEmotionName + "'—brief, yet full of warmth and light, life's simple delights."});
+        // Pass data to parent component
+
 
       } else {
         setHighestEmotion('No emotions detected.');
@@ -131,6 +147,7 @@ export default function Vision() {
     setHighestEmotion(null);
     setDescription('');
     setCapturedImage('');
+    setPromptResult(null);
   };
 
   const mintWorthy = async () => {
@@ -148,6 +165,56 @@ export default function Vision() {
     console.error("Error minting:", error)
   }
 };
+
+const handleModelChange = (value: string): void => {
+  setModel(value);
+};
+
+const handlePrompt = async (e: React.MouseEvent) => {
+  e.preventDefault();
+
+  const promptValue = description; // Using description as prompt
+  const response = await fetch("/api/predictions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      input: { prompt: promptValue },
+      version: model,
+    }),
+  });
+  let prediction = await response.json();
+  if (response.status !== 201) {
+    console.error("Prediction error:", prediction.error);
+    return;
+  }
+
+  setPromptResult(prediction);
+
+  if (prediction.status === "succeeded") {
+    form.setValue('media', prediction?.output[prediction.output.length - 1]);
+  }
+
+  while (prediction.status !== "succeeded" && prediction.status !== "failed") {
+    await sleep(1000);
+    const response = await fetch("/api/predictions/" + prediction.id);
+    prediction = await response.json();
+    if (response.status !== 200) {
+      console.error("Prediction error:", prediction.error);
+      return;
+    }
+    setPromptResult(prediction);
+  }
+};
+
+const handleSubmit = async () => {
+  form.setValue('media', promptResult?.output[promptResult.output.length - 1] || '');
+  await submitPrompt(form.getValues());
+};
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 
   return (
     <Card>
@@ -172,27 +239,74 @@ export default function Vision() {
               audio={false}
               ref={webcamRef}
               screenshotFormat="image/jpeg"
-              width={480}
+              width={400}
               height={480}
             />
           )}
         </div>
         )}
 
-        <button onClick={capture} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Capture
-        </button>
-        <button onClick={clearData} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">
-          Clear Data
-        </button>
-        <button onClick={mintWorthy} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">Mint Worthy</button>
+        <div className="flex flex-wrap gap-4">
+           <button onClick={capture} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Capture
+           </button>
+  <button onClick={clearData} className="flex-shrink-0 bg-blue-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+    Clear Data
+  </button>
+  <button onClick={mintWorthy} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+    Mint Worthy
+  </button>
+</div>
+
         {loading && <p>Loading...</p>}
         {highestEmotion && !loading && <p>Title: {highestEmotion}</p>}
         <div className="mt-2">
-                {<Haiku lines={description.split('\n')} />}
+                {description && !loading && <p>Description: <Haiku lines={description.split('\,')} /></p>}
           </div>
         {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180}/>} {/* Render captured image */}
       </CardContent>
+      <CardContent>
+        <Select onValueChange={handleModelChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a model" />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map((model) => {
+              return <SelectItem key={model.label} value={model.version}>{model.label}</SelectItem>
+            })}
+          </SelectContent>
+        </Select>
+
+        {promptResult?.status !== undefined && promptResult?.status !== "succeeded" && (
+          <div className="container mx-auto px-4 md:px-8 flex flex-col items-center justify-center space-y-4">
+            <div className="lds-ellipsis">
+              <div />
+              <div />
+              <div />
+              <div />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-semibold mb-4 text-white text-center">
+              {promptResult?.status}
+            </h1>
+          </div>
+        )}
+
+        {promptResult?.status !== null && promptResult?.status == "succeeded" && (
+          <Image src={promptResult?.output[promptResult.output.length - 1]} alt={"Result generated from prompt"} width={400} height={250} />
+        )}
+      </CardContent>
+      <CardFooter className="justify-center items-center gap-2">
+        <Button onClick={handlePrompt} type="submit">
+          Paint
+        </Button>
+        <Button
+          type="submit"
+          onClick={handleSubmit}
+          disabled={promptResult?.status !== "succeeded"}
+        >
+          Mint Me
+        </Button>
+      </CardFooter>
       <CardFooter>
         <p>@surfiniaburger</p>
       </CardFooter>
