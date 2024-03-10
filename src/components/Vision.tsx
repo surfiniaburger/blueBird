@@ -12,6 +12,8 @@ import { analyzeEmotions } from '@/app/api/emotion/edenAiService';
 import useMintImage from '@/hooks/useMint';
 import { models } from "../data/models";
 import { Button } from './ui/button';
+import EmotionRecommendations from './EmotionRecommendations';
+import { LightBulbIcon } from '@heroicons/react/24/outline';
 import {
   Select,
   SelectContent,
@@ -37,12 +39,15 @@ export default function Vision() {
   const [webcamEnabled, setWebcamEnabled] = useState<boolean>(false); // New state for webcam status
   const [model, setModel] = useState<string | undefined>();
   const [promptResult, setPromptResult] = useState<any | null>(null);
-
-
+  const [showRecommendations, setShowRecommendations] = useState(false);
 
   const webcamRef = React.useRef<Webcam>(null);
   const { onSubmit } = useMintImage();
   const { form, onSubmit: submitPrompt } = useMintImage();
+
+  const toggleRecommendations = () => {
+    setShowRecommendations(prevState => !prevState);
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -148,6 +153,7 @@ export default function Vision() {
     setDescription('');
     setCapturedImage('');
     setPromptResult(null);
+    setShowRecommendations(false);
   };
 
   const mintWorthy = async () => {
@@ -217,7 +223,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 
   return (
-    <Card>
+    <div className="flex justify-center items-center">
+      <div>
+         <Card>
       <CardHeader>
         <CardTitle>Quetzal</CardTitle>
         <CardDescription>Capture moments and mint NFT</CardDescription>
@@ -247,16 +255,16 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
         )}
 
         <div className="flex flex-wrap gap-4">
-           <button onClick={capture} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Capture
-           </button>
-  <button onClick={clearData} className="flex-shrink-0 bg-blue-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-    Clear Data
-  </button>
-  <button onClick={mintWorthy} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-    Mint Worthy
-  </button>
-</div>
+            <button onClick={capture} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+               Capture
+            </button>
+            <button onClick={clearData} className="flex-shrink-0 bg-blue-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+               Clear Data
+            </button>
+            <button onClick={mintWorthy} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Mint Worthy
+            </button>
+          </div>
 
         {loading && <p>Loading...</p>}
         {highestEmotion && !loading && <p>Title: {highestEmotion}</p>}
@@ -311,5 +319,21 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
         <p>@surfiniaburger</p>
       </CardFooter>
     </Card>
+      </div>
+      <div className="relative">
+        <button className={`absolute top-0 right-0 mt-2 mr-2 ${highestEmotion ? '' : 'pointer-events-none'}`}  onClick={toggleRecommendations}>
+          <LightBulbIcon className="w-6" />
+        </button>
+        {/* Mini card for recommendations */}
+        {showRecommendations && (
+          <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
+            <EmotionRecommendations emotion={highestEmotion || ''} />
+          </div>
+        )}
+      </div>
+    </div>
 );
 };
+
+
+
