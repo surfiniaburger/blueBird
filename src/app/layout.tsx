@@ -24,8 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const referer = headersList.get("referer");
 
 
-  let pageTitle = "Mintbase Minter Example";
-  let pageDescription = "Learn how to Mint NFTs on NEAR with Mintbase Minter Example"
+  let pageTitle = "Quetzal";
+  let pageDescription = "Home of creative selfies to NFT"
 
   // Check if signMeta exists in the URL
   const signMeta = referer ? extractSignMeta(referer) : "";

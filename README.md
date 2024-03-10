@@ -42,6 +42,12 @@ EDEN_AI_API_KEY=
 ```
 - If you have issues with the API env, please enter the key directly to the edenAiService.ts, for example `"Bearer XXXXXXXXXXXXX"`. ⚠️ This is not recommended for a production environment, please do so at your discretion.
 
+Get your Replicate  API Token from (https://replicate.com/account/api-tokens) after you sign up for a new account if you don't have one.
+
+```
+REPLICATE_API_TOKEN='...'
+```
+
 - `proxyAddress`: This is the address of the proxy contract on Mintbase. It is either taken from the environment variable `NEXT_PUBLIC_PROXY_CONTRACT_ADDRESS` or defaults to `"0.minsta.proxy.mintbase.testnet"` if the environment variable is not set.
 
 - `contractAddress`: The address of the minting contract. Similar to `proxyAddress`, it is sourced from `NEXT_PUBLIC_MINT_CONTRACT_ADDRESS` or defaults to `"test122212.mintspace2.testnet"`.
