@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Vision.tsx
 'use client'
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect, Suspense } from 'react';
+import  { CardSkeleton } from './ui/skeletons';
 import Webcam from 'react-webcam';
 import { uploadReference } from '@mintbase-js/storage'; // Import the uploadReference function
 import { useChat } from "ai/react";
@@ -286,6 +286,7 @@ const toggleAudio = () => {
         <CardTitle>Quetzal</CardTitle>
         <CardDescription>Capture moments and mint NFT</CardDescription>
       </CardHeader>
+      <Suspense fallback={<CardSkeleton/>}>
       <CardContent>
         {isClient && (
           <div>
@@ -332,10 +333,12 @@ const toggleAudio = () => {
         <div className="mt-2">
                 {description && !loading && <p>Description: <Haiku lines={description.split('\,')} /></p>}
           </div>
-           
-      
+
+
         {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180}/>} {/* Render captured image */}
       </CardContent>
+      </Suspense>
+
       <CardContent>
         <Select onValueChange={handleModelChange}>
           <SelectTrigger>

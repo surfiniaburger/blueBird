@@ -17,9 +17,7 @@ This is a simple minter example built on top of Next.js 14
 
 ## Project Walkthrough
 
-Quetzal is a dynamic application that allows users to capture selfies in real-time and detect the emotions portrayed in the images using computer vision powered by Eden API. 
-The detected emotion serves as a prompt for ChatGPT to generate a haiku, which encapsulates the essence of the emotion with a touch of hope for something more. The generated title-emotion,
-along with the selfie and haiku description, can then be effortlessly converted into an NFT (Non-Fungible Token) with just a click of a button.
+Quetzal is a dynamic application that allows users to capture selfies in real-time and detect the emotions portrayed in the images using computer vision powered by Eden API. The detected emotion serves as a prompt for ChatGPT to generate a haiku, which encapsulates the essence of the emotion with a touch of hope for something more. Using the haiku as a prompt for stability AI Image generation, we then generate an Image that reflects the user emotion. It could become a form of therapy when we struggle with balancing our mental health. Quetzal goes further and give recommendations based on the given emotion.   The generated title-emotion, along with the selfie/generated image and haiku description, can then be effortlessly converted into an NFT (Non-Fungible Token) with just a click of a button.
 
 ### Setup
 
