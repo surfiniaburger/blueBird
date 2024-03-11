@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from 'axios';
+import {  MicIcon } from 'lucide-react';
 
 const Haiku = ({ lines }: { lines: string[] }) => (
   <pre className="whitespace-pre-wrap">
@@ -40,6 +42,8 @@ export default function Vision() {
   const [model, setModel] = useState<string | undefined>();
   const [promptResult, setPromptResult] = useState<any | null>(null);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [audioUrl, setAudioUrl] = useState('');
+  
 
   const webcamRef = React.useRef<Webcam>(null);
   const { onSubmit } = useMintImage();
@@ -64,6 +68,7 @@ export default function Vision() {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant') {
         setDescription(lastMessage.content); // Update description based on chat response
+        generateAudio(lastMessage.content)
         setLoading(false);
       }
     }
@@ -154,7 +159,10 @@ export default function Vision() {
     setCapturedImage('');
     setPromptResult(null);
     setShowRecommendations(false);
+    setAudioUrl('');
   };
+
+  
 
   const mintWorthy = async () => {
     // Prepare data to pass to Minter
@@ -221,10 +229,58 @@ const handleSubmit = async () => {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// handle text to audio
+const generateAudio = async (text: string) => {
+  try {
+    const options = {
+      method: "POST",
+      url: "https://api.edenai.run/v2/audio/text_to_speech",
+      headers: {
+        authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmU5ZmY2MTYtNGRkMy00N2M5LThhZjUtYjYyNzRlNzdkODg3IiwidHlwZSI6ImFwaV90b2tlbiJ9.fRV-cr9LCiqtfU3dc2H8fQnW_FrU0Immouwreg-Ned8",
+      },
+      data: {
+        providers: "amazon",
+        language: "en",
+        text: text,
+        option: "MALE",
+        fallback_providers: "",
+      },
+    };
+
+    const response = await axios.request(options);
+    const audioUrl = response.data.amazon.audio_resource_url || null;
+
+    if (audioUrl) {
+      setAudioUrl(audioUrl);
+    } else {
+      console.error('Audio URL not found in response data');
+    }
+  } catch (error) {
+    console.error('Failed to generate audio:', error);
+  }
+};
+
+
+const toggleAudio = () => {
+  if (audioUrl) {
+    new Audio(audioUrl).play();
+  }
+};
 
   return (
     <div className="flex justify-center items-center">
       <div>
+      <div className="relative">
+        <button className={`absolute top-0 right-0 mt-2 mr-2 ${highestEmotion ? '' : 'pointer-events-none'}`}  onClick={toggleRecommendations}>
+          <LightBulbIcon className="w-6" />
+        </button>
+        {/* Mini card for recommendations */}
+        {showRecommendations && (
+          <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
+            <EmotionRecommendations emotion={highestEmotion || ''} />
+          </div>
+        )}
+      </div>
          <Card>
       <CardHeader>
         <CardTitle>Quetzal</CardTitle>
@@ -264,6 +320,11 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
             <button onClick={mintWorthy} className="flex-shrink-0 bg-blue-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                 Mint Worthy
             </button>
+            <button onClick={toggleAudio} >
+
+          <MicIcon/>
+
+      </button>
           </div>
 
         {loading && <p>Loading...</p>}
@@ -271,6 +332,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
         <div className="mt-2">
                 {description && !loading && <p>Description: <Haiku lines={description.split('\,')} /></p>}
           </div>
+           
+      
         {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180}/>} {/* Render captured image */}
       </CardContent>
       <CardContent>
@@ -302,6 +365,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
         {promptResult?.status !== null && promptResult?.status == "succeeded" && (
           <Image src={promptResult?.output[promptResult.output.length - 1]} alt={"Result generated from prompt"} width={400} height={250} />
         )}
+
       </CardContent>
       <CardFooter className="justify-center items-center gap-2">
         <Button onClick={handlePrompt} type="submit">
@@ -319,17 +383,6 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
         <p>@surfiniaburger</p>
       </CardFooter>
     </Card>
-      </div>
-      <div className="relative">
-        <button className={`absolute top-0 right-0 mt-2 mr-2 ${highestEmotion ? '' : 'pointer-events-none'}`}  onClick={toggleRecommendations}>
-          <LightBulbIcon className="w-6" />
-        </button>
-        {/* Mini card for recommendations */}
-        {showRecommendations && (
-          <div className="w-1/3 bg-white rounded-lg shadow-lg p-6">
-            <EmotionRecommendations emotion={highestEmotion || ''} />
-          </div>
-        )}
       </div>
     </div>
 );
