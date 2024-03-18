@@ -5,6 +5,8 @@ interface EmotionResponse {
   [key: string]: number | null;
 }
 
+const apiKey = process.env.EDEN_AI_API_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmU5ZmY2MTYtNGRkMy00N2M5LThhZjUtYjYyNzRlNzdkODg3IiwidHlwZSI6ImFwaV90b2tlbiJ9.fRV-cr9LCiqtfU3dc2H8fQnW_FrU0Immouwreg-Ned8";
+
 export async function analyzeEmotions(mediaValue: string) {
   try {
     const response = await axios.post('https://api.edenai.run/v2/image/face_detection', {
@@ -13,7 +15,7 @@ export async function analyzeEmotions(mediaValue: string) {
       fallback_providers: '',
     }, {
       headers: {
-        Authorization: `Bearer ${process.env.EDEN_AI_API_KEY || 'hey'}`,
+        Authorization: `Bearer ${apiKey}`,
       },
     });
 
@@ -35,3 +37,31 @@ export async function analyzeEmotions(mediaValue: string) {
     return null;
   }
 }
+
+
+// handle text to audio
+export const generateAudio = async (text: string) => {
+  try {
+    const options = {
+      method: "POST",
+      url: "https://api.edenai.run/v2/audio/text_to_speech",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+      },
+      data: {
+        providers: "amazon",
+        language: "en",
+        text: text,
+        option: "MALE",
+        fallback_providers: "",
+      },
+    };
+
+    const response = await axios.request(options);
+    const audioUrl = response.data.amazon.audio_resource_url || null;
+
+    return audioUrl
+  } catch (error) {
+    console.error('Failed to generate audio:', error);
+  }
+};
