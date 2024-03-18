@@ -21,10 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import axios from 'axios';
 import {  MicIcon } from 'lucide-react';
 import { generateVideo } from '@/server/videoProcessing';
-
+import { generateAudio } from '@/app/api/emotion/edenAiService';
 
 const Haiku = ({ lines }: { lines: string[] }) => (
   <pre className="whitespace-pre-wrap">
@@ -249,37 +248,15 @@ const handleSubmit = async () => {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// handle text to audio
-const generateAudio = async (text: string) => {
-  try {
-    const options = {
-      method: "POST",
-      url: "https://api.edenai.run/v2/audio/text_to_speech",
-      headers: {
-        authorization: `Bearer ${process.env.EDEN_AI_API_KEY || 'hey'}`,
-      },
-      data: {
-        providers: "amazon",
-        language: "en",
-        text: text,
-        option: "MALE",
-        fallback_providers: "",
-      },
-    };
-
-    const response = await axios.request(options);
-    const audioUrl = response.data.amazon.audio_resource_url || null;
-
-    if (audioUrl) {
+useEffect(() => {
+  generateAudio(description)
+    .then((audioUrl) => {
       setAudioUrl(audioUrl);
-    } else {
-      console.error('Audio URL not found in response data');
-    }
-  } catch (error) {
-    console.error('Failed to generate audio:', error);
-  }
-};
-
+    })
+    .catch(error => {
+      console.error('Error generating audio:', error);
+    });
+}, [description]);
 
 const toggleAudio = () => {
   if (audioUrl) {
