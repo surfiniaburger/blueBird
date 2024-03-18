@@ -162,6 +162,42 @@ export async function analyzeEmotions(mediaValue: string) {
 }
 ```
 
+The API route for text to audio is defined in `/src/components/Vison.tsx`. It sends a `POST` request to the Eden API with the haiku as the text prompt:
+
+```
+
+// handle text to audio
+const generateAudio = async (text: string) => {
+  try {
+    const options = {
+      method: "POST",
+      url: "https://api.edenai.run/v2/audio/text_to_speech",
+      headers: {
+        authorization: `Bearer ${process.env.EDEN_AI_API_KEY || 'hey'}`,
+      },
+      data: {
+        providers: "amazon",
+        language: "en",
+        text: text,
+        option: "MALE",
+        fallback_providers: "",
+      },
+    };
+
+    const response = await axios.request(options);
+    const audioUrl = response.data.amazon.audio_resource_url || null;
+
+    if (audioUrl) {
+      setAudioUrl(audioUrl);
+    } else {
+      console.error('Audio URL not found in response data');
+    }
+  } catch (error) {
+    console.error('Failed to generate audio:', error);
+  }
+};
+```
+
 The API route for text to Image  is defined in `/src/server/videoProcessing.ts`. It sends a `POST` request to the Stability AI API with the haiku as the text prompt, it then calls the resize and generate video function which sets off a chain reaction to generate video:
 
 ```
