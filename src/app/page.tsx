@@ -8,15 +8,14 @@ import { useSearchParams } from "next/navigation";
 import { SuccessPage } from "@/components/Success";
 import { mbUrl, nearblocksUrl } from "@/config/setup";
 import { getTxnHash } from "@/hooks/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { CardSkeleton } from "@/components/ui/skeletons";
+//import Minter from "@/components/Minter";
 import Vision from "@/components/Vision";
-
-
 export default function Home() {
   const { isConnected } = useMbWallet();
   const [txnUrl, setTxnUrl] = useState("");
-  
- 
+
 
 
 
@@ -57,8 +56,9 @@ const txnHashes = params.get("transactionHashes")
     return (
       <main className="flex flex-col items-center justify-center mt-2 ">
         <NearWalletConnector />
-        <Vision/>
-        
+        <Suspense fallback={<CardSkeleton />} >
+          <Vision/>
+        </Suspense>
       </main>
     );
 

@@ -13,7 +13,7 @@ export async function analyzeEmotions(mediaValue: string) {
       fallback_providers: '',
     }, {
       headers: {
-        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmU5ZmY2MTYtNGRkMy00N2M5LThhZjUtYjYyNzRlNzdkODg3IiwidHlwZSI6ImFwaV90b2tlbiJ9.fRV-cr9LCiqtfU3dc2H8fQnW_FrU0Immouwreg-Ned8",
+        Authorization: `Bearer ${process.env.EDEN_AI_API_KEY || 'hey'}`,
       },
     });
 
