@@ -1,3 +1,4 @@
+//Minter.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
@@ -17,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import {
   Select,
   SelectContent,
@@ -26,6 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { analyzeEmotions } from '@/app/api/emotion/edenAiService';
+import { generateVideo } from '@/server/videoProcessing';
+
+
 
 // Vision component code...
 export default function Vision() {
@@ -37,10 +40,11 @@ export default function Vision() {
   const [webcamEnabled, setWebcamEnabled] = useState<boolean>(false);
   const [model, setModel] = useState<string | undefined>();
   const [promptResult, setPromptResult] = useState<any | null>(null);
-
   const webcamRef = React.useRef<Webcam>(null);
   const { onSubmit: mintImage } = useMintImage();
   const { form, onSubmit: submitPrompt } = useMintImage();
+  const [stabilityAIVideo, setStabilityAIVideo] = useState<string | null>(null);
+
 
   useEffect(() => {
     setIsClient(true);
@@ -56,9 +60,27 @@ export default function Vision() {
       if (lastMessage.role === 'assistant') {
         setDescription(lastMessage.content);
         setLoading(false);
+
       }
     }
   }, [messages, isLoading]);
+
+
+  useEffect(() => {
+    if (description) {
+      setLoading(true);
+      generateVideo(description)
+        .then((videoPath) => {
+          setStabilityAIVideo(videoPath);
+          setLoading(false); // Set loading state to false after receiving the video URL
+        })
+        .catch((error) => {
+          console.error('Error fetching video from Stability AI:', error);
+          setLoading(false); // Set loading state to false in case of error
+        });
+      }
+  }, [description]);
+  
 
   const toggleWebcam = () => {
     setWebcamEnabled(prevState => !prevState);
@@ -121,6 +143,7 @@ export default function Vision() {
     setHighestEmotion(null);
     setDescription('');
     setCapturedImage('');
+    setStabilityAIVideo(null);
   };
 
   const mintWorthy = async () => {
@@ -229,6 +252,15 @@ export default function Vision() {
           {description && !loading && <p>Description: {description}</p>}
         </div>
         {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180} />}
+        {stabilityAIVideo && (
+        <div>
+          <p>Stability AI Generated Video:</p>
+          <video width="320" height="240" controls preload="none">
+            <source src={`/videos/${stabilityAIVideo}`} type="video/mp4" />
+           Your browser does not support the video tag.
+          </video>
+        </div>
+      )}
       </CardContent>
       <CardFooter>
         <p>@surfiniaburger</p>

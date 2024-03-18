@@ -9,14 +9,13 @@ import { SuccessPage } from "@/components/Success";
 import { mbUrl, nearblocksUrl } from "@/config/setup";
 import { getTxnHash } from "@/hooks/utils";
 import { useEffect, useState, Suspense } from "react";
-import Vision from "@/components/Vision";
 import { CardSkeleton } from "@/components/ui/skeletons";
-
+//import Minter from "@/components/Minter";
+import Vision from "@/components/Vision";
 export default function Home() {
   const { isConnected } = useMbWallet();
   const [txnUrl, setTxnUrl] = useState("");
-  
- 
+
 
 
 
@@ -60,8 +59,6 @@ const txnHashes = params.get("transactionHashes")
         <Suspense fallback={<CardSkeleton />} >
           <Vision/>
         </Suspense>
-        
-        
       </main>
     );
 

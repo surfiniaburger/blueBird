@@ -17,7 +17,7 @@ This is a simple minter example built on top of Next.js 14
 
 ## Project Walkthrough
 
-Quetzal is a dynamic application that allows users to capture selfies in real-time and detect the emotions portrayed in the images using computer vision powered by Eden API. The detected emotion serves as a prompt for ChatGPT to generate a haiku, which encapsulates the essence of the emotion with a touch of hope for something more. Using the haiku as a prompt for stability AI Image generation, we then generate an Image that reflects the user emotion. It could become a form of therapy when we struggle with balancing our mental health. Quetzal goes further and give recommendations based on the given emotion.   The generated title-emotion, along with the selfie/generated image and haiku description, can then be effortlessly converted into an NFT (Non-Fungible Token) with just a click of a button.
+Quetzal is a dynamic application that allows users to capture selfies in real-time and detect the emotions portrayed in the images using computer vision powered by Eden API. The detected emotion serves as a prompt for ChatGPT to generate a haiku, which encapsulates the essence of the emotion with a touch of hope for something more. Using the haiku as a prompt for stability AI Image generation, we then generate an Image that reflects the user emotion. It could become a form of therapy when we struggle with balancing our mental health. Quetzal goes further and give recommendations based on the given emotion.   The generated title-emotion, along with the selfie/generated image and haiku description, can then be effortlessly converted into an NFT (Non-Fungible Token) with just a click of a button. In addition, Quetzal is an app that lets you make a movie with your facial expression.
 
 ### Setup
 
@@ -44,6 +44,12 @@ Get your Replicate  API Token from (https://replicate.com/account/api-tokens) af
 
 ```
 REPLICATE_API_TOKEN='...'
+```
+
+Get your Stability API Key from (https://platform.stability.ai/account/keys) after you sign up for a new account if you don't have one.
+
+```
+STABILITY_API_KEY='...'
 ```
 
 - `proxyAddress`: This is the address of the proxy contract on Mintbase. It is either taken from the environment variable `NEXT_PUBLIC_PROXY_CONTRACT_ADDRESS` or defaults to `"0.minsta.proxy.mintbase.testnet"` if the environment variable is not set.
@@ -154,6 +160,70 @@ export async function analyzeEmotions(mediaValue: string) {
     return null;
   }
 }
+```
+
+The API route for text to Image  is defined in `/src/server/videoProcessing.ts`. It sends a `POST` request to the Stability AI API with the haiku as the text prompt, it then calls the resize and generate video function which sets off a chain reaction to generate video:
+
+```
+export async function generateVideo(description: string): Promise<string> {
+  try {
+
+    const response = await fetch(`${apiHost}/v1/generation/${engineId}/text-to-image`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          text_prompts: [
+            {
+              text: description,
+            },
+          ],
+          cfg_scale: 7,
+          height: 1024,
+          width: 1024,
+          steps: 30,
+          samples: 1,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Non-200 response: ${await response.text()}`);
+      }
+
+      const responseJSON = await response.json();
+      const artifacts = responseJSON.artifacts;
+
+      // Variable to store the final video URL
+      let finalVideoUrl: string | null = null;
+
+      for (let i = 0; i < artifacts.length; i++) {
+        const imageBase64 = artifacts[i].base64;
+        const imageData = Buffer.from(imageBase64, 'base64');
+
+        // Call resizeAndGenerateVideo and store the video URL
+        const videoUrl = await resizeAndGenerateVideo(imageData);
+
+        // If finalVideoUrl is null, set it to the current video URL
+        // Otherwise, you can handle combining or choosing the appropriate video URL
+        if (finalVideoUrl === null) {
+          finalVideoUrl = videoUrl;
+        }
+        }
+
+        if (finalVideoUrl === null) {
+          throw new Error("No video URL found");
+        }
+
+    return finalVideoUrl;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
 ```
 
 ## Get in touch

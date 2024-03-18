@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import axios from 'axios';
 import {  MicIcon } from 'lucide-react';
+import { generateVideo } from '@/server/videoProcessing';
+
 
 const Haiku = ({ lines }: { lines: string[] }) => (
   <pre className="whitespace-pre-wrap">
@@ -43,6 +45,7 @@ export default function Vision() {
   const [promptResult, setPromptResult] = useState<any | null>(null);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [audioUrl, setAudioUrl] = useState('');
+  const [stabilityAIVideo, setStabilityAIVideo] = useState<string | null>(null);
   
 
   const webcamRef = React.useRef<Webcam>(null);
@@ -56,6 +59,22 @@ export default function Vision() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    if (description) {
+      setLoading(true);
+      generateVideo(description)
+        .then((videoPath) => {
+          setStabilityAIVideo(videoPath);
+          setLoading(false); // Set loading state to false after receiving the video URL
+        })
+        .catch((error) => {
+          console.error('Error fetching video from Stability AI:', error);
+          setLoading(false); // Set loading state to false in case of error
+        });
+      }
+  }, [description]);
+  
 
   const { append, messages, isLoading } = useChat({
     api: "/api/chat-completion",
@@ -160,6 +179,7 @@ export default function Vision() {
     setPromptResult(null);
     setShowRecommendations(false);
     setAudioUrl('');
+    setStabilityAIVideo(null);
   };
 
   
@@ -236,7 +256,7 @@ const generateAudio = async (text: string) => {
       method: "POST",
       url: "https://api.edenai.run/v2/audio/text_to_speech",
       headers: {
-        authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmU5ZmY2MTYtNGRkMy00N2M5LThhZjUtYjYyNzRlNzdkODg3IiwidHlwZSI6ImFwaV90b2tlbiJ9.fRV-cr9LCiqtfU3dc2H8fQnW_FrU0Immouwreg-Ned8",
+        authorization: `Bearer ${process.env.EDEN_AI_API_KEY || 'hey'}`,
       },
       data: {
         providers: "amazon",
@@ -335,7 +355,16 @@ const toggleAudio = () => {
           </div>
 
 
-        {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={180} height={180}/>} {/* Render captured image */}
+        {capturedImage && !loading && <Image src={capturedImage} alt="Captured" width={400} height={250}/>} {/* Render captured image */}
+        {stabilityAIVideo && (
+        <div>
+          <p>Stability AI Generated Video:</p>
+          <video width="400" height="240" controls preload="none">
+            <source src={`/videos/${stabilityAIVideo}`} type="video/mp4" />
+           Your browser does not support the video tag.
+          </video>
+        </div>
+      )}
       </CardContent>
       </Suspense>
 
