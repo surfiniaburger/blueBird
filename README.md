@@ -1,6 +1,6 @@
 # Quetzal
 <img src="https://i.imgur.com/QDJPsAA.png" alt="cover_image" width="0" />
-This is a simple minter example built on top of Next.js 14
+
 
 [![Demo](https://img.shields.io/badge/Demo-Visit%20Demo-brightgreen)](https://minter.mintbase.xyz/)
 [![Deploy](https://img.shields.io/badge/Deploy-on%20Vercel-blue)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMintbase%2Ftemplates%2Ftree%2Fmain%2Fminter)
@@ -162,7 +162,7 @@ export async function analyzeEmotions(mediaValue: string) {
 }
 ```
 
-The API route for text to audio is defined in `/src/components/Vison.tsx`. It sends a `POST` request to the Eden API with the haiku as the text prompt:
+The API route for text to audio is defined in `/src/app/api/emotion/edenAiService.ts`. It sends a `POST` request to the Eden API with the haiku as the text prompt:
 
 ```
 
