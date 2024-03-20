@@ -1,7 +1,8 @@
 "use client"
 
 import { useMbWallet } from "@mintbase-js/react";
-import { Button } from "@/components/ui/button"
+import { Button } from "../components/ui/button"
+import React from "react";
 
 export const NearWalletConnector = () => {
   const { connect, disconnect, activeAccountId, isConnected } = useMbWallet();
