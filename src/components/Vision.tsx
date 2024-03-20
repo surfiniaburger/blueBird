@@ -8,8 +8,8 @@ import { uploadReference } from '@mintbase-js/storage'; // Import the uploadRefe
 import { useChat } from "ai/react";
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "./ui/card";
 import Image from 'next/image'
-import { analyzeEmotions } from '@/app/api/emotion/edenAiService';
-import useMintImage from '@/hooks/useMint';
+import { analyzeEmotions } from '../app/api/emotion/edenAiService';
+import useMintImage from '../hooks/useMint';
 import { models } from "../data/models";
 import { Button } from './ui/button';
 import EmotionRecommendations from './EmotionRecommendations';
@@ -20,10 +20,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../components/ui/select";
 import {  MicIcon } from 'lucide-react';
-import { generateVideo } from '@/server/videoProcessing';
-import { generateAudio } from '@/app/api/emotion/edenAiService';
+import { generateVideo } from '../server/videoProcessing';
+import { generateAudio } from '../app/api/emotion/edenAiService';
 
 const Haiku = ({ lines }: { lines: string[] }) => (
   <pre className="whitespace-pre-wrap">
@@ -242,8 +242,12 @@ const handlePrompt = async (e: React.MouseEvent) => {
 };
 
 const handleSubmit = async () => {
-  form.setValue('media', promptResult?.output[promptResult.output.length - 1] || '');
-  await submitPrompt(form.getValues());
+  const data = {
+    title: highestEmotion || '', // Provide a default value if highestEmotion is null
+    description: description || '', // Provide a default value if description is null
+    media: promptResult?.output[promptResult.output.length - 1] || ''
+  };
+  await submitPrompt(data);
 };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

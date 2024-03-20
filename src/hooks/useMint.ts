@@ -24,7 +24,7 @@ import {
   uploadReference,
 } from "@mintbase-js/storage";
 import { formSchema } from "./formSchema";
-import { MintbaseWalletSetup, proxyAddress } from "@/config/setup";
+import { MintbaseWalletSetup, proxyAddress } from "../config/setup";
 import { Wallet } from "@near-wallet-selector/core";
 import { cbUrl } from "./utils";
 

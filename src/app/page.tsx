@@ -1,17 +1,18 @@
 "use client";
 
 import { useMbWallet } from "@mintbase-js/react";
-import { NearWalletConnector } from "@/components/NearWalletSelector";
+import { NearWalletConnector } from "../components/NearWalletSelector";
 
 import Head from "next/head";
 import { useSearchParams } from "next/navigation";
-import { SuccessPage } from "@/components/Success";
-import { mbUrl, nearblocksUrl } from "@/config/setup";
-import { getTxnHash } from "@/hooks/utils";
+import { SuccessPage } from "../components/Success";
+import { mbUrl, nearblocksUrl } from "../config/setup";
+import { getTxnHash } from "../hooks/utils";
 import { useEffect, useState, Suspense } from "react";
-import { CardSkeleton } from "@/components/ui/skeletons";
+import { CardSkeleton } from "../components/ui/skeletons";
 //import Minter from "@/components/Minter";
-import Vision from "@/components/Vision";
+import Vision from "../components/Vision";
+import React from "react";
 export default function Home() {
   const { isConnected } = useMbWallet();
   const [txnUrl, setTxnUrl] = useState("");

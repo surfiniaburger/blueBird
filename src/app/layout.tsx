@@ -1,7 +1,9 @@
-import { AppProvider } from "@/components/Provider";
+//import { AppProvider } from "@/components/Provider";
+import {AppProvider} from "../components/Provider"
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+import React from "react";
 
 const extractSignMeta = (url: string): string | null => {
   const signMetaIndex = url.indexOf("signMeta=");

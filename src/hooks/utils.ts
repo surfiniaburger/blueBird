@@ -1,7 +1,7 @@
 //utils.ts
 "use client";
 
-import { nearblocksApi } from "@/config/setup";
+import { nearblocksApi } from "../config/setup";
 import { ChangeEvent } from "react";
 
 export enum TransactionSuccessEnum {
