@@ -38,7 +38,8 @@ Get your Eden AI API Key from (https://www.edenai.co/blog?categories=Use+case)
 ```
 EDEN_AI_API_KEY=
 ```
-- If you have issues with the API env, please enter the key directly to the edenAiService.ts, for example `"Bearer XXXXXXXXXXXXX"`. ⚠️ This is not recommended for a production environment, please do so at your discretion.
+If you have issues with the API env, please enter the key directly to the edenAiService.ts, for example `"Bearer XXXXXXXXXXXXX"`.
+⚠️ This is not recommended for a production environment, please do so at your discretion.
 
 Get your Replicate  API Token from (https://replicate.com/account/api-tokens) after you sign up for a new account if you don't have one.
 
@@ -69,7 +70,7 @@ To customize these configurations for different environments, you can set the fo
 - `NEXT_PUBLIC_MINT_CONTRACT_ADDRESS`: Your mint contract address on Mintbase.
 - `NEXT_PUBLIC_NETWORK`: The network you want to interact with (`"testnet"` or `"mainnet"`).
 
-Remember to change the value of  saveDirectory  at  `/src/server/videoProcessing.ts`  to point to the `public/videos` in your own directory.
+⚠️ Remember to change the value of  saveDirectory  at  `/src/server/videoProcessing.ts`  to point to the `public/videos` in your own directory.
 
 
 
