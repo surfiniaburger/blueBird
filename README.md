@@ -69,7 +69,7 @@ To customize these configurations for different environments, you can set the fo
 - `NEXT_PUBLIC_MINT_CONTRACT_ADDRESS`: Your mint contract address on Mintbase.
 - `NEXT_PUBLIC_NETWORK`: The network you want to interact with (`"testnet"` or `"mainnet"`).
 
-Remember to change the saveDirectory function at  `/src/server/videoProcessing.ts`  to point to the `public/videos` in your own directory.
+Remember to change the value of  saveDirectory  at  `/src/server/videoProcessing.ts`  to point to the `public/videos` in your own directory.
 
 
 
